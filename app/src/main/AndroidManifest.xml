@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="android.example.com.popularmovies2marzena">
+
+    <!-- This permission is necessary in order for Movie to perform network access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- This permission allows application to access information about network -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.MainActivity"
+            android:label="@string/manifest_main_activity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.DetailActivity"
+            android:label="@string/manifest_details_activity"
+            android:parentActivityName=".activity.MainActivity"/>
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".activity.MainActivity" />
+        <activity android:name=".activity.SettingsActivity"
+            android:label="@string/manifest_settings_activity"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
+
+        <provider
+            android:authorities="android.example.com.popularmovies2marzena"
+            android:name=".data.MovieProvider"
+            android:exported="false" />
+
+
+
+    </application>
+
+</manifest>

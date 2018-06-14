@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Popular Movies 2 Marzena</string>
+
+    <!--Activity name in AndroidManifest-->
+    <string name="manifest_main_activity">Movie list</string>
+    <string name="manifest_details_activity">Movie details</string>
+    <string name="manifest_settings_activity">Movie settings</string>
+
+    <!-- Content descriptions for ImageView-->
+    <string name="poster_content_description">Movie poster image</string>
+
+    <!--Menu titles -->
+    <string name="menu_settings">Settings</string>
+    <string name="menu_popular">Popular</string>
+    <string name="menu_top_rated">Top rated</string>
+    <string name="menu_favourites">Favourites</string>
+
+    <!--Main Activity error messages-->
+    <string name="no_internet_connection">Please, connect to the Internet</string>
+    <string name="no_movies">No movies found</string>
+    <string name="no_favourites">You haven\'t added any movie to favourites yet!</string>
+
+
+    <!-- Details Activity-->
+    <string name="details_error_message">Movie data not available</string>
+    <string name="details_trailers_label">Trailers:</string>
+    <string name="details_reviews_label">Reviews:</string>
+    <string name="details_no_reviews">There is no reviews</string>
+    <string name="details_no_trailers">There is no videos</string>
+    <string name="details_vote_average_max">/10</string>
+
+
+    <!-- Toast message in Details Activity when current movie has been successfully added to favourites -->
+    <string name="details_add_movie_successful">was added to favourites</string>
+    <!-- Toast message in Details Activity when current movie has failed to be added to favourites -->
+    <string name="details_add_movie_failed">Error while adding movie to favourites</string>
+
+    <!-- Toast message in Details Activity when current movie has failed to be removed from favourites-->
+    <string name="details_remove_movie_failed">Error with removing movie from favourites</string>
+
+    <!-- Toast message in Details Activity when current movie was successfully removed from favourites-->
+    <string name="details_remove_movie_successful">was removed from favourites</string>
+
+    <!-- Strings for movies sort order preferences_main.xml -->
+    <string name="preferences_sort_order_label">Sort by</string>
+    <string name="preferences_sort_order_key" translatable="false">sort_order</string>
+    <string name="preferences_sort_order_by_default" translatable="false">@string/preferences_most_popular_value</string>
+
+    <!-- Labels for sort by most popular option -->
+    <string name="preferences_most_popular_label">Most popular movies</string>
+    <string name="preferences_most_popular_value" translatable="false">popular?</string>
+
+    <!-- Labels for sort by top rated option -->
+    <string name="preferences_top_rated_label">Top rated movies</string>
+    <string name="preferences_top_rated_value" translatable="false">top_rated?</string>
+
+    <!-- Labels for sort by favourites option -->
+    <string name="preferences_favourites_label">Favourites</string>
+    <string name="preferences_favourites_value" translatable="false">favourites</string>
+
+</resources>
+
