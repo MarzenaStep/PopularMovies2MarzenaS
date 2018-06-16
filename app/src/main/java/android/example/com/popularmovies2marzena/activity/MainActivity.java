@@ -49,8 +49,7 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
     // This constant String will be used to store movies list
     private static final String MOVIES_KEY = "movies";
 
-    //This constant String will be used to store RecycleView state
-    private static final String RECYCLEVIEW_STATE = "recycleView_state";
+    private static final  String STATE_SCROLL_POSITION = "scrollPosition";
 
     // Constant value for the movie loader ID. It can be any integer.
     public static final int INTERNET_MOVIE_LOADER_ID = 1;
@@ -60,11 +59,10 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
 
     //Adapter for the RecycleView
     private MovieAdapter movieAdapter;
-    private GridLayoutManager layoutManager;
     private ActivityMainBinding mainBinding;
-    private ArrayList<Movie> moviesList = new ArrayList<>();
-
-
+    private List<Movie> moviesList = new ArrayList<>();
+    private Parcelable recycleViewSavedState;
+    //private int savedPosition = 0;
 
 
     // FAVOURITES_MOVIES_PROJECTION defines the columns from the table that will be returned for each row
@@ -96,9 +94,6 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
             String preferredSortOrder = sharedPref.getString(keyForSortOrder, defaultSortOrder);
             String popular = getApplicationContext().getString(R.string.preferences_sort_order_by_default);
 
-            layoutManager.scrollToPosition(0);
-
-
             if (popular.equals(preferredSortOrder)) {
                 setTitle(getString(R.string.preferences_most_popular_label));
                 return new MovieLoader(getApplicationContext(), POPULAR_URL);
@@ -127,6 +122,9 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
             //If there is a valid list of {@link Movie}s, then add them to the adapter's data set otherwise display error message - no movies found
             if (movies != null && !movies.isEmpty()) {
                 movieAdapter.updateMoveList(movies);
+                //layoutManager.scrollToPosition(savedPosition);
+                mainBinding.rvPoster.getLayoutManager().onRestoreInstanceState(recycleViewSavedState);
+
 
             } else {
                 mainBinding.tvErrorMessage.setVisibility(View.VISIBLE);
@@ -171,7 +169,7 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
             movieAdapter.clearMovieList();
             movieAdapter.swapCursor(cursor);
 
-            List<Movie> favouritesList = new ArrayList<>();
+            List<Movie> movieList = new ArrayList<>();
 
             cursor = getApplicationContext().getContentResolver().query(MovieEntry.CONTENT_URI,
                     FAVOURITES_MOVIES_PROJECTION, null, null, null);
@@ -204,10 +202,11 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
                     Log.v("Cursor", movieId + "-" + backdrop + "-" + originalTitle + "-" + overview + "-" + posterUrl + "-" + releaseDate + "-" + title + "-" + voteAverage);
 
                     Movie movie = new Movie(title, originalTitle, releaseDate, posterUrl, backdrop, voteAverage, overview, movieId);
-                    favouritesList.add(movie);
+                    movieList.add(movie);
                 }
 
-                movieAdapter.updateMoveList(favouritesList);
+                movieAdapter.updateMoveList(movieList);
+                mainBinding.rvPoster.getLayoutManager().onRestoreInstanceState(recycleViewSavedState);
             }
         }
 
@@ -235,29 +234,24 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
          */
         //If the savedInstanceState bundle is not null, update trailer list
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(MOVIES_KEY)) {
+            if (savedInstanceState.containsKey(MOVIES_KEY) || savedInstanceState.containsKey(STATE_SCROLL_POSITION)) {
+                //savedPosition = savedInstanceState.getInt(STATE_SCROLL_POSITION);
+                recycleViewSavedState = savedInstanceState.getParcelable(STATE_SCROLL_POSITION);
                 moviesList = savedInstanceState.getParcelableArrayList(MOVIES_KEY);
-            }
-            else if (savedInstanceState.containsKey(RECYCLEVIEW_STATE)) {
-                Parcelable recycleViewPosition = savedInstanceState.getParcelable(RECYCLEVIEW_STATE);
-                mainBinding.rvPoster.getLayoutManager().onRestoreInstanceState(recycleViewPosition);
             }
         }
 
         //https://discussions.udacity.com/t/autofit-grid-recycler-view/188314
         Resources resources = getResources();
-        int numOfColumns = resources.getInteger(R.integer.list_columns_number);
+         int numOfColumns = resources.getInteger(R.integer.list_columns_number);
 
-        layoutManager = new GridLayoutManager(this, numOfColumns);
-
+        GridLayoutManager layoutManager = new GridLayoutManager(this, numOfColumns);
         // Attach layout manager to the RecyclerView
         mainBinding.rvPoster.setLayoutManager(layoutManager);
         mainBinding.rvPoster.setHasFixedSize(true);
 
         movieAdapter = new MovieAdapter(this, new ArrayList<Movie>(), this);
-
         mainBinding.rvPoster.setAdapter(movieAdapter);
-
         movieAdapter.notifyDataSetChanged();
 
 
@@ -297,7 +291,6 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
         String top = getApplicationContext().getString(R.string.preferences_top_rated_value);
 
         if (preference.equals(popular) || preference.equals(top)) {
-
             getLoaderManager().restartLoader(INTERNET_MOVIE_LOADER_ID, null, new MovieCallback());
             getLoaderManager().destroyLoader(DATABASE_FAVOURITE_LOADER_ID);
 
@@ -366,8 +359,9 @@ public class MainActivity  extends AppCompatActivity implements SharedPreference
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelableArrayList(MOVIES_KEY, moviesList);
-        savedInstanceState.putParcelable(RECYCLEVIEW_STATE, mainBinding.rvPoster.getLayoutManager().onSaveInstanceState());
+        savedInstanceState.putParcelable(STATE_SCROLL_POSITION, mainBinding.rvPoster.getLayoutManager().onSaveInstanceState());
+        //savedInstanceState.putInt(STATE_SCROLL_POSITION, layoutManager.findLastVisibleItemPosition());
+        savedInstanceState.putParcelableArrayList(MOVIES_KEY, (ArrayList<? extends Parcelable>) moviesList);
         super.onSaveInstanceState(savedInstanceState);
     }
 
